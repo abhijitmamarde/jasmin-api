@@ -123,6 +123,8 @@ class SMPPCCMViewSet(ViewSet):
 
         telnet.sendline('smppccm -a')
         updates = request.data
+        print "smppccm create -> updates"
+        print updates
         for k, v in updates.items():
             if not ((type(updates) is dict) and (len(updates) >= 1)):
                 raise JasminSyntaxError('updates should be a a key value array')
@@ -179,7 +181,9 @@ class SMPPCCMViewSet(ViewSet):
             raise UnknownError(detail='Unknown connector:' + cid)
         if matched_index != 0:
             raise JasminError(detail=" ".join(telnet.match.group(0).split()))
-        updates = request.data
+        # AJM
+        # updates = request.data
+        updates = request.data['updates']
         for k, v in updates.items():
             if not ((type(updates) is dict) and (len(updates) >= 1)):
                 raise JasminSyntaxError('updates should be a a key value array')
