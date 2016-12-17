@@ -124,6 +124,7 @@ class UserViewSet(ViewSet):
                 'password': password
             }
         )
+        print "CALIING PERSIST for : USER CREATE......... "
         telnet.sendline('persist\n')
         telnet.expect(r'.*' + STANDARD_PROMPT)
         return JsonResponse({'user': self.get_user(telnet, uid)})
@@ -159,9 +160,14 @@ class UserViewSet(ViewSet):
             raise UnknownError(detail='Unknown user:' + uid)
         if matched_index != 0:
             raise JasminError(detail=" ".join(telnet.match.group(0).split()))
-        updates = request.data
+        # AJM
+        # updates = request.data
+        updates = request.data['updates']
         if not ((type(updates) is list) and (len(updates) >= 1)):
-            raise JasminSyntaxError('updates should be a list')
+            typ = type(updates)
+            l = len(updates)
+            s = 'Incorrect type for updates: %s, len: %d, updates=%s' % (typ, l, updates)
+            raise JasminSyntaxError(s)
         for update in updates:
             if not ((type(update) is list) and (len(update) >= 1)):
                 raise JasminSyntaxError("Not a list: %s" % update)
@@ -183,6 +189,7 @@ class UserViewSet(ViewSet):
         if ok_index == 0:
             raise JasminSyntaxError(
                 detail=" ".join(telnet.match.group(1).split()))
+        print "CALIING PERSIST for : USER UPDATE......... "
         telnet.sendline('persist\n')
         #Not sure why this needs to be repeated
         telnet.expect(r'.*' + STANDARD_PROMPT)
@@ -196,6 +203,7 @@ class UserViewSet(ViewSet):
             r'.+(.*)' + STANDARD_PROMPT,
         ])
         if matched_index == 0:
+            print "CALIING PERSIST for : SIMPLE USER CREATION......... "
             telnet.sendline('persist\n')
             if return_user:
                 telnet.expect(r'.*' + STANDARD_PROMPT)
