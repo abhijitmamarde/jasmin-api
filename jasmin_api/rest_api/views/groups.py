@@ -62,9 +62,13 @@ class GroupViewSet(ViewSet):
             r'.+Error: (.+)[\n\r]+' + INTERACTIVE_PROMPT,
             r'.+(.*)(' + INTERACTIVE_PROMPT + '|' + STANDARD_PROMPT + ')',
         ])
-        if matched_index == 0:
-            gid = telnet.match.group(2).strip()
+        # AJM - TODO:: temp fix, calling persist after adding group
+        print "************ matched_index=%d ************" % matched_index
+        if matched_index == 2:
+            gid = request.data['gid']
+            print gid
             telnet.sendline('persist\n')
+            print "After persist call"
             return JsonResponse({'name': gid})
         else:
             raise ActionFailed(telnet.match.group(1))
