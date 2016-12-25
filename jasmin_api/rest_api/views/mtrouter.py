@@ -81,7 +81,7 @@ class MTRouterViewSet(ViewSet):
         omit_serializer: true
         parameters:
         - name: type
-          description: One of DefaultRoute, StaticMTRoute, RandomRoundrobinMTRoute
+          description: One of DefaultRoute, StaticMTRoute, RandomRoundrobinMTRoute, FailoverMTRoute
           required: true
           type: string
           paramType: form
@@ -134,10 +134,10 @@ class MTRouterViewSet(ViewSet):
         connectors = ['smppc(%s)' % c.strip()
                 for c in smppconnectors.split(',') if c.strip()
             ] + ['http(%s)' % c for c in httpconnectors.split(',') if c.strip()]
-        if rtype == 'randomroundrobinmtroute':
+        if rtype in ['randomroundrobinmtroute', 'failovermtroute']:
             if len(connectors) < 2:
                 raise MutipleValuesRequiredKeyError(
-                    'Round Robin route requires at least two connectors')
+                    'Round Robin or Failover route requires at least two connectors')
             ikeys['connectors'] = ';'.join(connectors)
         else:
             if len(connectors) != 1:

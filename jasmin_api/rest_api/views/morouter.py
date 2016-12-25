@@ -76,13 +76,13 @@ class MORouterViewSet(ViewSet):
     def create(self, request):
         """Create MORouter.
         Required parameters: type, order, smppconnectors, httpconnectors
-        More than one connector is allowed only for RandomRoundrobinMORoute
+        More than one connector is allowed only for RandomRoundrobinMORoute or FailoverMORoute
         ---
         # YAML
         omit_serializer: true
         parameters:
         - name: type
-          description: One of DefaultRoute, StaticMORoute, RandomRoundrobinMORoute
+          description: One of DefaultRoute, StaticMORoute, RandomRoundrobinMORoute, FailoverMORoute
           required: true
           type: string
           paramType: form
@@ -131,7 +131,7 @@ class MORouterViewSet(ViewSet):
         connectors = ['smpps(%s)' % c.strip()
                 for c in smppconnectors.split(',') if c.strip()
             ] + ['http(%s)' % c for c in httpconnectors.split(',') if c.strip()]
-        if rtype == 'randomroundrobinmoroute':
+        if rtype in ['randomroundrobinmoroute', 'failovermoroute']:
             if len(connectors) < 2:
                 raise MutipleValuesRequiredKeyError(
                     'Round Robin route requires at least two connectors')
